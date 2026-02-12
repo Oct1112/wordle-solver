@@ -30,7 +30,13 @@ def main():
         print(f"\nRound {round_num}")
         print(f"Guess: {guess}")
 
-        feedback = guess_random(guess=guess, seed=seed)
+        # 异常处理：API 请求
+        try:
+            feedback = guess_random(guess=guess, seed=seed)
+        except Exception as e:
+            print(f"API error: {e}, stopping solver.")
+            break
+
         print("Feedback:", feedback)
 
         if is_solved(feedback):
@@ -38,7 +44,11 @@ def main():
             return
 
         solver.update_candidates(guess, feedback)
-        guess = solver.next_guess()
+        try:
+            guess = solver.next_guess()
+        except Exception as e:
+            print(f"No valid candidates left: {e}")
+            break
 
     print("Failed to solve within max rounds.")
 
